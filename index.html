@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מבדק: מושגים בערבית מדוברת — כיתה ז׳</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#1a1a3e; --blue:#4f7df5; --blue-light:#e8efff;
+  --purple:#7c5cfc; --purple-light:#ede8ff;
+  --gold:#f5a623; --gold-light:#fff5e0;
+  --green:#22c55e; --green-light:#dcfce7;
+  --red:#ef4444; --red-light:#fee2e2;
+  --bg:#f4f6fb; --card:#fff; --text:#1e293b; --text-light:#64748b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+.app-header{
+  background:linear-gradient(135deg,#1a1a3e,#2d2b6b,#4f3d99);
+  padding:2rem 1.5rem 1.5rem;text-align:center;position:relative;border-bottom:3px solid var(--red);
+}
+.app-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:30px;background:var(--bg);border-radius:50% 50% 0 0;}
+.app-header h1{font-family:'Rubik';font-size:1.7rem;color:#fff;margin-bottom:0.2rem;}
+.app-header p{color:rgba(255,255,255,0.6);font-size:0.9rem;}
+.exam-badge{display:inline-block;background:var(--red);color:#fff;padding:0.25rem 1rem;border-radius:20px;font-size:0.82rem;font-weight:700;margin-top:0.5rem;}
+
+.timer-bar{
+  display:none;justify-content:center;align-items:center;gap:0.6rem;padding:0.6rem;
+  background:var(--navy);color:#fff;font-family:'Rubik',monospace;font-size:1.05rem;font-weight:600;
+  position:sticky;top:0;z-index:50;border-bottom:2px solid var(--gold);
+}
+.timer-bar .nm{font-family:'Heebo';font-weight:400;font-size:0.88rem;color:rgba(255,255,255,0.7);}
+.timer-bar .tm{color:var(--gold);direction:ltr;}
+.timer-bar .qc{font-family:'Heebo';font-size:0.82rem;color:rgba(255,255,255,0.6);}
+
+.container{max-width:750px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+
+.login-screen{
+  position:fixed;inset:0;background:linear-gradient(135deg,#1a1a3e,#2d2b6b,#4f3d99);
+  display:flex;align-items:center;justify-content:center;z-index:100;
+}
+.login-card{
+  background:#fff;border-radius:24px;padding:2.5rem 2rem;text-align:center;
+  max-width:420px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  animation:pop .5s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes pop{from{transform:scale(.85) translateY(20px);opacity:0}to{transform:scale(1);opacity:1}}
+.login-card .icon{font-size:3.5rem;margin-bottom:.3rem;}
+.login-card h2{font-family:'Rubik';font-size:1.4rem;color:var(--navy);margin-bottom:.2rem;}
+.login-card .sub{color:var(--text-light);margin-bottom:.3rem;font-size:.95rem;}
+.grade-badge{display:inline-block;background:var(--purple-light);color:var(--purple);padding:.2rem .8rem;border-radius:20px;font-size:.82rem;font-weight:700;margin-bottom:.5rem;}
+.login-input{
+  width:100%;font-family:'Heebo';font-size:1.1rem;padding:.8rem 1rem;
+  border:2px solid #e2e8f0;border-radius:12px;outline:none;text-align:center;direction:rtl;
+  transition:all .3s;margin-bottom:.6rem;
+}
+.login-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(124,92,252,.15);}
+.login-error{color:var(--red);font-size:.85rem;min-height:1.2em;margin-bottom:.5rem;}
+.login-warning{
+  background:var(--red-light);border:1px solid rgba(239,68,68,.3);border-radius:10px;
+  padding:.7rem;font-size:.85rem;color:#991b1b;margin-bottom:1rem;line-height:1.5;
+}
+.login-info{
+  background:var(--blue-light);border-radius:10px;padding:.6rem;font-size:.85rem;
+  color:#1e40af;margin-bottom:1rem;line-height:1.4;
+}
+
+.btn{font-family:'Heebo';font-weight:700;border:none;border-radius:12px;cursor:pointer;transition:all .25s;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;}
+.btn-lg{font-size:1.05rem;padding:.75rem 2rem;width:100%;}
+.btn-exam{background:linear-gradient(135deg,var(--navy),#2d2b6b);color:#fff;box-shadow:0 4px 14px rgba(26,26,62,.3);}
+.btn-exam:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,26,62,.4);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#f97316);color:#fff;}
+.btn-center{display:flex;justify-content:center;gap:.6rem;margin-top:1.2rem;}
+
+.card{background:var(--card);border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.05);padding:1.5rem;margin-bottom:1.2rem;}
+.section-header{font-family:'Rubik';font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem;}
+.section-desc{color:var(--text-light);font-size:.88rem;margin-bottom:.8rem;line-height:1.5;}
+
+.q-item{padding:.8rem 0;border-bottom:1px solid #f1f5f9;}
+.q-item:last-child{border-bottom:none;}
+.q-label{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem;}
+.q-num{
+  width:30px;height:30px;background:var(--purple);color:#fff;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;flex-shrink:0;
+}
+.q-num.ok{background:var(--green);}
+.q-num.err{background:var(--red);}
+.q-text{font-weight:600;color:var(--navy);font-size:.95rem;}
+.q-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;padding-right:2.5rem;}
+.q-opt{
+  padding:.55rem .5rem;border:2px solid #e2e8f0;border-radius:10px;background:#fafbff;
+  cursor:pointer;text-align:center;font-family:'Heebo';font-size:.88rem;
+  font-weight:500;color:var(--navy);transition:all .2s;user-select:none;
+}
+.q-opt:hover:not(.lk){border-color:var(--purple);background:var(--purple-light);}
+.q-opt.ch{border-color:var(--navy);background:var(--navy);color:#fff;cursor:default;}
+.q-opt.lk{opacity:.4;cursor:default;pointer-events:none;}
+.q-opt.cr{border-color:var(--green)!important;background:var(--green-light)!important;color:#065f46!important;opacity:1!important;}
+.q-opt.wr{border-color:var(--red)!important;background:var(--red-light)!important;color:#991b1b!important;opacity:1!important;}
+
+.submit-area{text-align:center;padding:1.5rem;}
+.unanswered-msg{background:var(--gold-light);color:#92400e;padding:.7rem 1rem;border-radius:10px;font-size:.9rem;margin-bottom:.8rem;display:none;}
+
+.results-screen{display:none;}
+.result-card{background:linear-gradient(135deg,#fffbeb,#fff);border:3px solid var(--gold);border-radius:20px;padding:2rem;text-align:center;}
+.result-icon{font-size:3.5rem;margin-bottom:.3rem;}
+.result-title{font-family:'Rubik';font-size:1.3rem;color:var(--navy);margin-bottom:.2rem;}
+.result-name{font-size:1.1rem;color:var(--purple);font-weight:700;margin-bottom:.8rem;}
+.result-score{font-family:'Rubik';font-size:3rem;font-weight:900;margin:.3rem 0;}
+.result-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:1rem 0;}
+.rb-item{background:#fff;padding:.6rem;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.rb-item .label{font-size:.8rem;color:var(--text-light);}
+.rb-item .value{font-family:'Rubik';font-size:1.3rem;font-weight:700;}
+
+.code-section{background:var(--navy);color:#fff;padding:1.2rem;border-radius:14px;margin-top:1rem;}
+.code-section .title{font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:.3rem;}
+.code-box{
+  font-family:monospace;font-size:.55rem;font-weight:700;color:var(--gold);
+  background:rgba(255,255,255,.08);padding:.6rem;border-radius:10px;
+  cursor:pointer;user-select:all;direction:ltr;word-break:break-all;line-height:1.5;transition:background .2s;
+}
+.code-box:hover{background:rgba(255,255,255,.15);}
+.code-hint{font-size:.72rem;color:rgba(255,255,255,.4);margin-top:.3rem;}
+.result-time{font-size:.85rem;color:var(--text-light);margin-top:.8rem;}
+.classroom-tip{
+  background:var(--blue-light);border-radius:12px;padding:1rem;margin-top:1rem;
+  font-size:.9rem;color:#1e40af;line-height:1.6;text-align:right;
+}
+.classroom-tip strong{color:var(--navy);}
+
+.toast{
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--navy);color:#fff;padding:.7rem 1.5rem;border-radius:12px;
+  font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,.2);opacity:0;transition:all .3s;z-index:999;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media(max-width:500px){.q-opts{grid-template-columns:1fr;padding-right:0;}}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>📝 מבדק: מושגים בערבית מדוברת</h1>
+  <p>מבצע "שאגת הארי" — כיתה ז׳</p>
+  <div class="exam-badge">⚠ תשובה אחת בלבד לכל שאלה</div>
+</header>
+
+<div class="timer-bar" id="timerBar">
+  <span class="nm" id="timerName"></span>
+  <span>|</span><span>⏱</span><span class="tm" id="timerDisplay">00:00</span>
+  <span>|</span><span class="qc" id="qCount">0/20 נענו</span>
+</div>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="icon">📝</div>
+    <h2>מבדק — מושגים בערבית מדוברת</h2>
+    <div class="sub">מבצע "שאגת הארי"</div>
+    <div class="grade-badge">כיתה ז׳</div>
+    <div class="login-warning">⚠ <strong>שימו לב:</strong> ניתן לענות רק פעם אחת על כל שאלה!<br>קראו בעיון לפני שאתם בוחרים תשובה.</div>
+    <div class="login-info">📋 בסיום המבדק תקבלו קוד — העתיקו והדביקו <strong>בתגובה הפרטית</strong> בקלאסרום.</div>
+    <input type="text" class="login-input" id="nameInput" placeholder="השם המלא שלכם..." autofocus>
+    <div class="login-error" id="loginErr"></div>
+    <button class="btn btn-exam btn-lg" onclick="startExam()">📝 התחילו את המבדק</button>
+  </div>
+</div>
+
+<div class="container" id="examContainer" style="display:none;">
+  <div class="card">
+    <div class="section-header">📘 חלק א׳: מהו התעתיק הנכון? (10 שאלות)</div>
+    <div class="section-desc">לכל משמעות בעברית, בחרו את התעתיק הנכון מבין האפשרויות. <strong>⚠ לא ניתן לשנות תשובה!</strong></div>
+    <div id="partA"></div>
+  </div>
+  <div class="card">
+    <div class="section-header">📗 חלק ב׳: מהי המשמעות הנכונה? (10 שאלות)</div>
+    <div class="section-desc">לכל תעתיק, בחרו את המשמעות הנכונה בעברית. <strong>⚠ לא ניתן לשנות תשובה!</strong></div>
+    <div id="partB"></div>
+  </div>
+  <div class="card submit-area">
+    <div class="unanswered-msg" id="unansweredMsg"></div>
+    <button class="btn btn-exam" onclick="submitExam()" id="submitBtn" style="width:auto;padding:.8rem 3rem;">📨 סיימו והגישו את המבדק</button>
+  </div>
+  <div class="results-screen" id="resultsScreen"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const allTerms=[
+  {tr:"עַמַלִיֶּה",m:"מבצע",emoji:"🎯"},
+  {tr:"תַצְפִּיֶּה",m:"חיסול",emoji:"🎯"},
+  {tr:"אל-מֻרְשִׁד אל-אַעְלַא",m:"המנהיג העליון",emoji:"👑"},
+  {tr:"אל-חַרְס את׳-ת׳וֹרִי",m:"משמרות המהפכה",emoji:"⚔️"},
+  {tr:"צַוַארִיח׳",m:"טילים",emoji:"🚀"},
+  {tr:"נִט׳אם אל-אִרְהַאבּ",m:"משטר הטרור",emoji:"🏴"},
+  {tr:"צַ׳רְבֶּה מְפַאגְ׳אֶה",m:"מכת פתע",emoji:"💥"},
+  {tr:"דִפַאע גַ׳וּוִי",m:"הגנה אווירית",emoji:"🛡️"},
+  {tr:"קִיַאדֶה וְסֵיטְרֶה",m:"פיקוד ושליטה",emoji:"📡"},
+  {tr:"סְלַאח נַוַוִי",m:"נשק גרעיני",emoji:"☢️"},
+  {tr:"מִחְוַר אל-מֻקַאוְמֶה",m:"ציר ההתנגדות",emoji:"⛓️"},
+  {tr:"תַהְדִיד",m:"איום",emoji:"⚠️"},
+  {tr:"מֻנַט׳מֶה אִרְהַאבִּיֶּה",m:"ארגון טרור",emoji:"🏴"},
+  {tr:"רַדְע",m:"הרתעה",emoji:"✋"},
+  {tr:"זַאִיר אל-אַסַד",m:"שאגת הארי",emoji:"🦁"},
+];
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function pickW(arr,cv,key,n){return shuffle(arr.filter(t=>t[key]!==cv)).slice(0,n).map(t=>t[key]);}
+
+// Part A: meaning → transliteration — pick 10 from 15
+const partAPool=shuffle([...allTerms]).slice(0,10);
+const partAQs=partAPool.map(t=>({q:t.emoji+' '+t.m, correct:t.tr, options:shuffle([t.tr,...pickW(allTerms,t.tr,'tr',2)])}));
+
+// Part B: transliteration → meaning — pick 10 from 15 (independent selection)
+const partBPool=shuffle([...allTerms]).slice(0,10);
+const partBQs=partBPool.map(t=>({q:t.tr, correct:t.m, options:shuffle([t.m,...pickW(allTerms,t.m,'m',2)])}));
+
+const TOTAL=20;
+const answers={};
+let studentName='',startTime=null,timerInt=null,submitted=false;
+
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')startExam();});
+
+function startExam(){
+  const name=document.getElementById('nameInput').value.trim();
+  if(name.length<2){document.getElementById('loginErr').textContent='נא להכניס שם מלא';return;}
+  studentName=name;startTime=new Date();
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('examContainer').style.display='block';
+  document.getElementById('timerBar').style.display='flex';
+  document.getElementById('timerName').textContent=studentName;
+  buildQs();
+  timerInt=setInterval(()=>{
+    const s=Math.floor((Date.now()-startTime.getTime())/1000);
+    document.getElementById('timerDisplay').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  },1000);
+}
+
+function buildQs(){
+  const pA=document.getElementById('partA');
+  partAQs.forEach((q,qi)=>{
+    const id='A'+qi;
+    pA.innerHTML+='<div class="q-item"><div class="q-label"><div class="q-num" id="qn_'+id+'">'+(qi+1)+'</div><div class="q-text">מהו התעתיק של: <strong>'+q.q+'</strong>?</div></div><div class="q-opts" id="qo_'+id+'">'+q.options.map(o=>'<div class="q-opt" data-qid="'+id+'" data-val="'+o+'" onclick="ans(\''+id+'\',this)">'+o+'</div>').join('')+'</div></div>';
+  });
+  const pB=document.getElementById('partB');
+  partBQs.forEach((q,qi)=>{
+    const id='B'+qi;
+    pB.innerHTML+='<div class="q-item"><div class="q-label"><div class="q-num" id="qn_'+id+'">'+(qi+1)+'</div><div class="q-text">מהי המשמעות של: <strong>'+q.q+'</strong>?</div></div><div class="q-opts" id="qo_'+id+'">'+q.options.map(o=>'<div class="q-opt" data-qid="'+id+'" data-val="'+o+'" onclick="ans(\''+id+'\',this)">'+o+'</div>').join('')+'</div></div>';
+  });
+}
+
+function ans(qid,el){
+  if(submitted||answers[qid])return;
+  answers[qid]=el.dataset.val;
+  el.classList.add('ch');
+  document.getElementById('qo_'+qid).querySelectorAll('.q-opt').forEach(o=>{if(o!==el)o.classList.add('lk');});
+  document.getElementById('qn_'+qid).style.background='#64748b';
+  document.getElementById('qCount').textContent=Object.keys(answers).length+'/'+TOTAL+' נענו';
+}
+
+function submitExam(){
+  if(submitted)return;
+  const missing=TOTAL-Object.keys(answers).length;
+  if(missing>0){
+    const msg=document.getElementById('unansweredMsg');
+    msg.textContent='⚠ יש '+missing+' שאלות שלא נענו. הן ייחשבו כטעויות. להגיש בכל זאת?';
+    msg.style.display='block';
+    const btn=document.getElementById('submitBtn');
+    btn.textContent='⚠ כן, הגישו';btn.className='btn btn-gold';btn.onclick=doSubmit;
+    return;
+  }
+  doSubmit();
+}
+
+function doSubmit(){
+  if(submitted)return;
+  submitted=true;clearInterval(timerInt);
+  const end=new Date(),elapsed=Math.round((end-startTime)/60000),secs=Math.floor((end-startTime)/1000);
+
+  let aOk=0,bOk=0;const aErr=[],bErr=[];
+  partAQs.forEach((q,qi)=>{
+    const id='A'+qi,a=answers[id]||'';
+    if(a===q.correct)aOk++;else aErr.push({q:q.q.replace(/^[^\s]+ /,''),answered:a||'(לא נענה)',correct:q.correct});
+    reveal(id,q.correct);
+  });
+  partBQs.forEach((q,qi)=>{
+    const id='B'+qi,a=answers[id]||'';
+    if(a===q.correct)bOk++;else bErr.push({q:q.q,answered:a||'(לא נענה)',correct:q.correct});
+    reveal(id,q.correct);
+  });
+
+  const totalOk=aOk+bOk,pct=Math.round((totalOk/TOTAL)*100);
+  document.querySelector('.submit-area').style.display='none';
+
+  const report={v:2,type:'exam',name:studentName,date:end.toLocaleDateString('he-IL'),
+    time:end.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'}),
+    minutes:elapsed,seconds:secs,
+    scores:{partA:aOk+'/10',partB:bOk+'/10'},
+    total:totalOk+'/'+TOTAL,pct,
+    errors:{partA:aErr,partB:bErr}};
+  const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(report))));
+
+  let em='📝',msg='יש מקום לשיפור';
+  if(pct>=90){em='🏆';msg='מצוין!';}else if(pct>=80){em='🌟';msg='כל הכבוד!';}else if(pct>=65){em='👍';msg='לא רע!';}
+  const sc=pct>=70?'var(--green)':pct>=55?'var(--gold)':'var(--red)';
+
+  const res=document.getElementById('resultsScreen');
+  res.innerHTML=`
+    <div class="card result-card">
+      <div class="result-icon">${em}</div>
+      <div class="result-title">${msg}</div>
+      <div class="result-name">${studentName}</div>
+      <div class="result-breakdown">
+        <div class="rb-item"><div class="label">📘 חלק א׳ — תעתיק</div><div class="value" style="color:${aOk>=7?'var(--green)':'var(--red)'}">${aOk}/10</div></div>
+        <div class="rb-item"><div class="label">📗 חלק ב׳ — משמעות</div><div class="value" style="color:${bOk>=7?'var(--green)':'var(--red)'}">${bOk}/10</div></div>
+      </div>
+      <div class="result-score" style="color:${sc}">${pct}%</div>
+      <div style="font-size:1rem;color:var(--text-light)">${totalOk} מתוך ${TOTAL} תשובות נכונות</div>
+      <div class="code-section">
+        <div class="title">📋 לחצו להעתקה</div>
+        <div class="code-box" id="codeBox" onclick="copyReport()">${studentName}\nRPT:${encoded}</div>
+        <div class="code-hint">לחצו כאן — הטקסט יועתק</div>
+      </div>
+      <div class="classroom-tip">
+        <strong>📌 מה עושים עכשיו?</strong><br>
+        1. לחצו על הקוד למעלה (הוא יועתק אוטומטית)<br>
+        2. חזרו לגוגל קלאסרום<br>
+        3. בתחתית המטלה, בשדה <strong>"הוסיפו תגובה פרטית..."</strong> — הדביקו (Ctrl+V)<br>
+        4. לחצו על חץ השליחה ▶
+      </div>
+      <div class="result-time">⏱️ ${elapsed} דקות | 📅 ${end.toLocaleDateString('he-IL')} ${end.toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})}</div>
+    </div>
+    <div style="text-align:center;margin-top:1rem;">
+      <span style="font-size:.9rem;color:var(--blue);cursor:pointer;text-decoration:underline;" onclick="document.querySelector('.card').scrollIntoView({behavior:'smooth'})">📋 גללו למעלה לראות תשובות</span>
+    </div>`;
+
+  res.style.display='block';
+  res.scrollIntoView({behavior:'smooth'});
+}
+
+function reveal(qid,correct){
+  document.getElementById('qo_'+qid).querySelectorAll('.q-opt').forEach(o=>{
+    o.classList.remove('lk');
+    if(o.dataset.val===correct)o.classList.add('cr');
+    else if(o.classList.contains('ch')&&o.dataset.val!==correct)o.classList.add('wr');
+    else o.style.opacity='.35';
+  });
+  const n=document.getElementById('qn_'+qid);
+  const a=answers[qid]||'';
+  const qs=qid[0]==='A'?partAQs[+qid.slice(1)]:partBQs[+qid.slice(1)];
+  n.classList.add(a===qs.correct?'ok':'err');
+}
+
+function copyReport(){
+  navigator.clipboard.writeText(document.getElementById('codeBox').textContent.trim()).then(()=>showToast('✅ הועתק! הדביקו בקלאסרום')).catch(()=>{
+    const r=document.createRange();r.selectNodeContents(document.getElementById('codeBox'));
+    window.getSelection().removeAllRanges();window.getSelection().addRange(r);
+    showToast('סמנו והעתיקו (Ctrl+C)');
+  });
+}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+</script>
+</body>
+</html>
